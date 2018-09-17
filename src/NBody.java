@@ -1,16 +1,19 @@
 	
 
 /**
- * @author YOUR NAME THE STUDENT IN 201
+ * @TanishaNalavadi
  * 
  * Simulation program for the NBody assignment
  */
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.Scanner;
 
 public class NBody {
+	
+
 	
 	/**
 	 * Read the specified file and return the radius
@@ -18,16 +21,14 @@ public class NBody {
 	 * @return the radius stored in the file
 	 * @throws FileNotFoundException if fname cannot be open
 	 */
-	public static double readRadius(String fname) throws FileNotFoundException  {
+	public static double readRadius(String fname) throws FileNotFoundException  {//Uses a scanner and returns the radius of the planet (second line)
 		Scanner s = new Scanner(new File(fname));
-	
-		// TODO: read values at beginning of file to
-		// find the radius
-		
+		double radius=0;
+		int value=0;
+		value= s.nextInt();
+		radius= s.nextDouble();
 		s.close();
-		
-		// TODO: return radius read
-		return 0;	
+		return radius;	
 	}
 	
 	/**
@@ -37,27 +38,22 @@ public class NBody {
 	 * @return array of Body objects read
 	 * @throws FileNotFoundException if fname cannot be open
 	 */
-	public static Body[] readBodies(String fname) throws FileNotFoundException {
+	public static Body[] readBodies(String fname) throws FileNotFoundException {//creates an array with body objects
 		
 			Scanner s = new Scanner(new File(fname));
-			
-			// TODO: read # bodies, create array, ignore radius
-			int nb = 0; // # bodies to be read
-			
-			for(int k=0; k < nb; k++) {
-				
-				// TODO: read data for each body
-				// construct new body object and add to array
-			}
-			
+			Body[] bodies= new Body[s.nextInt()];
+			s.nextDouble();
+			for(int k=0; k < bodies.length; k++) {
+				bodies[k]=new Body (s.nextDouble(), s.nextDouble(), 
+							        		s.nextDouble(),s.nextDouble(),s.nextDouble(),s.next()); }	
 			s.close();
-			
-			// TODO: return array of body objects read
-			return null;
+			return bodies;
 	}
+			
+	
 	public static void main(String[] args) throws FileNotFoundException{
-		double totalTime = 157788000.0;
-		double dt = 25000.0;
+		double totalTime = 1000000000;
+		double dt = 1000000.0;
 		
 		String fname= "./data/planets.txt";
 		if (args.length > 2) {
@@ -72,26 +68,24 @@ public class NBody {
 		StdDraw.setScale(-radius, radius);
 		StdDraw.picture(0,0,"images/starfield.jpg");
 	
-		for(double t = 0.0; t < totalTime; t += dt) {
-			
-			// TODO: create double arrays xforces and yforces
-			// to hold forces on each body
-			
-			// TODO: loop over all bodies, calculate
-			// net forces and store in xforces and yforces
-			
-			// TODO: loop over all bodies and call update
-			// with dt and corresponding xforces, yforces values
-			
+		for(double t = 0.0; t < totalTime; t += dt) {//Creating a for loop that updates the xforces and yforces arrays that are used in the next for loop
 			StdDraw.picture(0,0,"images/starfield.jpg");
+			double[] xforces=new double[bodies.length];
+			double[] yforces=new double[bodies.length];
 			
-			// TODO: loop over all bodies and call draw on each one
+			for (int k=0; k<bodies.length; k++) {
+				xforces[k]=bodies[k].calcNetForceExertedByX(bodies);
+				yforces[k]=bodies[k].calcNetForceExertedByY(bodies);	
+			}
 			
-			StdDraw.show(10);
-		}
-		
-		// prints final values after simulation
-		
+			for (int i=0;  i<bodies.length; i++) //Creating a for loop that calls the method update for each body
+				{bodies[i].update (dt,  xforces[i],  yforces[i]);} 
+						
+			for (int s=0; s<bodies.length; s++) //Creating a for loop to 	iterate over each planet and draw it 
+				{bodies[s].draw();}
+			
+			StdDraw.show(10);}
+			
 		System.out.printf("%d\n", bodies.length);
 		System.out.printf("%.2e\n", radius);
 		for (int i = 0; i < bodies.length; i++) {
